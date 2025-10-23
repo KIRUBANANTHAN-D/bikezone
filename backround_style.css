@@ -1,0 +1,75 @@
+/* ===== Body ===== */
+body {
+    background-image: url('/static/images/ktm-logo.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-position: center;
+}
+
+/* ===== Header ===== */
+header {
+    background-color: rgba(0, 0, 0, 0.8); /* semi-transparent black */
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ===== Footer ===== */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* ===== Buttons ===== */
+button {
+    background-color: orange;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover {
+    background-color: darkorange;
+}
+
+/* ===== Links ===== */
+a {
+    color: orange;
+    text-decoration: none;
+}
+a:hover {
+    color: darkorange;
+}
+
+/* ===== Forms ===== */
+input[type="text"], input[type="number"], input[type="email"], select {
+    padding: 8px;
+    margin: 5px 0 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ===== Containers ===== */
+.container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    margin: 30px auto;
+    max-width: 800px;
+    border-radius: 10px;
+}
+
+/* ===== Headings ===== */
+h1, h2, h3 {
+    color: #ff7f00; /* KTM orange */
+}
