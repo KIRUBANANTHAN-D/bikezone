@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ bike.name }} - Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    #bg-video {
+      position: fixed;
+      right: -31%;
+      bottom: 21%;
+      min-width:0%;
+      min-height:0%;
+      z-index: -1; /* text front la irukka */
+      object-fit: cover; /* fit screen */
+    }
+    body {
+      background-image: url("{% static 'images/ktm-theme1.jpg' %}");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      color: #000000eb;
+    }
+    .main-img {
+      width: 80%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .thumb-img {
+      width: 100px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .thumb-img:hover {
+      transform: scale(1.1);
+      border: 2px solid #ff850aff;
+    }
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .video-container iframe,
+    .video-container video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .bike-header {
+      background: rgba(0, 0, 0, 0.7); /* black semi-transparent bg */
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      margin: 0 auto;
+    }
+
+  .bike-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    color: #1b0f07ff; /* KTM orange */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 10px rgba(118, 113, 108, 0.94);
+  }
+
+.bike-sub {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: bold;
+  color: #d4885ce2;
+  margin-top: -5px;
+  letter-spacing: 3px;
+}
+
+  </style>
+</head>
+<body>
+  <video autoplay muted loop id="bg-video">
+    <source src="{% static 'videos/KTM_Logo.mp4' %}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="container py-4">
+    <!-- Back button -->
+    <a href="/" class="btn btn-secondary mb-3">⬅ Home</a>
+
+    <!-- Bike Header -->
+    <div class="text-center mb-5">
+      <h1 class="bike-title">{{ bike.name }}</h1>
+      <p class="bike-sub">READY TO RACE</p>
+    </div>
+
+    <div class="row">
+      <!-- Left: Images -->
+      <div class="col-md-7">
+        <img id="mainImage" 
+             src="{% if bike.main_image %}{{ bike.main_image.url }}{% else %}{% static 'images/default_bike.jpg' %}{% endif %}" 
+             class="main-img mb-3" 
+             alt="{{ bike.name }}">
+
+        <div class="d-flex flex-wrap gap-2">
+          {% if bike.main_image %}
+            <img src="{{ bike.main_image.url }}" class="thumb-img" onclick="setMainImage(this.src)">
+          {% endif %}
+          {% for extra in bike.gallery.all %}
+            <img src="{{ extra.image.url }}" class="thumb-img" onclick="setMainImage(this.src)">
+          {% empty %}
+            <p class="text-muted">No extra images available.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Right: Details -->
+      <div class="col-md-5">
+        <h4>Bike Details</h4>
+        <p>{{ bike.description|default:"No description available." }}</p>
+
+        <ul class="list-group list-group-flush bg-transparent text-black">
+          <li class="list-group-item bg-transparent text-black">🏷 Price: ₹{{ bike.price }}</li>
+          {% if bike.model %}<li class="list-group-item bg-transparent text-black">📅 Model: {{ bike.model }}</li>{% endif %}
+          {% if bike.engine %}<li class="list-group-item bg-transparent text-black">⚙ Engine: {{ bike.engine }}</li>{% endif %}
+          {% if bike.mileage %}<li class="list-group-item bg-transparent text-black">⛽ Mileage: {{ bike.mileage }}</li>{% endif %}
+          {% if bike.top_speed %}<li class="list-group-item bg-transparent text-black">🏍 Top Speed: {{ bike.top_speed }}</li>{% endif %}
+        </ul>
+
+        <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
+      </div>
+    </div>
+
+    {% comment %} <!-- Video Section -->
+    {% if bike.video_url %}
+      <div class="video-container">
+        {% if "youtube" in bike.video_url or "youtu.be" in bike.video_url %}
+          <iframe src="{{ bike.video_url }}" frameborder="0" allowfullscreen></iframe>
+        {% else %}
+          <video src="{{ bike.video_url }}" controls></video>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div> {% endcomment %}
+
+  <!-- Booking Modal -->
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <form method="post" action="{% url 'book_bike' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">Book {{ bike.name }}</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Your Name</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <input type="text" name="phone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <textarea name="address" class="form-control" rows="2" required></textarea>
+            </div>
+            <input type="hidden" name="bike" value="{{ bike.id }}">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Confirm Booking</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setMainImage(src) {
+      document.getElementById('mainImage').src = src;
+    }
+  </script>
+</body>
+</html>
